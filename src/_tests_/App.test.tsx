@@ -3,5 +3,5 @@ import App from '../App';
 
 test('renders TailorMyCV homepage title', () => {
   render(<App />);
-  expect(screen.getByText(/TailorMyCV/i)).toBeInTheDocument();
+  expect(screen.getByText(/CV Score/i)).toBeInTheDocument();
 });
