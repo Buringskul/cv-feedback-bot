@@ -12,7 +12,7 @@
     "server:dev": "tsx server/index.ts",
     "server:build": "tsc -p server/tsconfig.json",
     "server:start": "node server/dist/index.js",
-    "dev:all": "concurrently -k -n WEB,API \"npm run dev\" \"npm run server:dev\""
+    "dev:all": "concurrently -k -n WEB,API \"npm:dev\" \"npm:server:dev\""
   },
   "dependencies": {
     "@google/genai": "^1.29.1",

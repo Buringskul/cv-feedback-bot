@@ -1,3 +1,4 @@
+// src/components/AuthForm.tsx
 import { useState } from "react";
 import { api } from "../integrations/api/client";
 import { supabase } from "../integrations/supabase/client";
@@ -11,23 +12,33 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  
+
+  // Helpful sanity logs (remove later)
+  // These should NOT be undefined
+  // @ts-ignore
+  console.log("VITE_SUPABASE_URL:", import.meta.env.VITE_SUPABASE_URL);
+  // @ts-ignore
+  console.log("VITE_SUPABASE_ANON_KEY starts:", String(import.meta.env.VITE_SUPABASE_ANON_KEY || "").slice(0, 8) + "...");
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setMsg(null);
     setLoading(true);
-
     try {
       if (mode === "signup") {
         await api.register(email, password, name || undefined);
-        setMsg("🎉 Account created! You can sign in now.");
+        setMsg("Account created! You can sign in now.");
       } else {
-        const r = await api.login(email, password);
+        const r = await api.login(email, password); // { token, user }
         localStorage.setItem("auth_token", r.token);
         localStorage.setItem("auth_user", JSON.stringify(r.user));
-        window.location.href = "/";
+        setMsg(`Signed in as ${r.user.email}`);
+        // OPTIONAL: navigate to home/dashboard
+        window.location.origin
       }
     } catch (err: any) {
+      console.error("Email auth error:", err);
       setMsg(err?.message ?? "Something went wrong");
     } finally {
       setLoading(false);
@@ -37,15 +48,20 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   async function google() {
     setMsg(null);
     setGoogleLoading(true);
-
     try {
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await supabase.auth.signInWithOAuth({
         provider: "google",
-        options: { redirectTo: window.location.origin },
+        options: { redirectTo: window.location.origin }, // e.g., http://localhost:5173
       });
-
-      if (error) setMsg(error.message);
+      if (error) {
+        console.error("Google OAuth error:", error);
+        setMsg(error.message);
+      } else {
+        // Supabase will redirect; after coming back, you'll have a session
+        console.log("Google OAuth initiated:", data);
+      }
     } catch (e: any) {
+      console.error("Google OAuth threw:", e);
       setMsg(e?.message ?? "Google sign-in failed");
     } finally {
       setGoogleLoading(false);
@@ -53,109 +69,63 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   }
 
   return (
-    <div
-      className="
-        w-full max-w-md mx-auto p-8 
-        rounded-2xl backdrop-blur-xl 
-        bg-[#0F172A]/70 border border-[#334155]
-        shadow-[0_0_25px_rgba(0,0,0,0.35)]
-      "
-    >
-      {/* Header */}
-      <h1
-        className="text-3xl font-extrabold text-center mb-8
-          bg-gradient-to-r from-[#10B981] to-[#34D399]
-          bg-clip-text text-transparent"
-      >
-        {mode === "signup" ? "Create Account" : "Welcome Back"}
+    <div className="max-w-sm mx-auto p-6 rounded-2xl shadow border">
+      <h1 className="text-2xl font-semibold mb-4">
+        {mode === "signup" ? "Create your account" : "Welcome back"}
       </h1>
 
-      {/* FORM */}
-      <form onSubmit={onSubmit} className="space-y-4">
-
+      <form onSubmit={onSubmit} className="space-y-3">
         {mode === "signup" && (
           <input
-            className="
-              w-full p-3 rounded-lg 
-              bg-[#1E293B] text-white placeholder-white/40
-              border border-[#334155] text-base
-              focus:outline-none focus:ring-2 focus:ring-[#10B981]
-            "
+            className="w-full border rounded p-2"
             placeholder="Full name (optional)"
             value={name}
             onChange={(e) => setName(e.target.value)}
           />
         )}
-
         <input
-          className="
-            w-full p-3 rounded-lg 
-            bg-[#1E293B] text-white placeholder-white/40
-            border border-[#334155] text-base
-            focus:outline-none focus:ring-2 focus:ring-[#10B981]
-          "
+          className="w-full border rounded p-2"
           placeholder="email@example.com"
           type="email"
-          required
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
+          autoComplete="email"
         />
-
         <input
-          className="
-            w-full p-3 rounded-lg 
-            bg-[#1E293B] text-white placeholder-white/40
-            border border-[#334155] text-base
-            focus:outline-none focus:ring-2 focus:ring-[#10B981]
-          "
+          className="w-full border rounded p-2"
           placeholder="password"
           type="password"
-          required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
+          autoComplete={mode === "signup" ? "new-password" : "current-password"}
         />
-
-        {/* Submit Button */}
         <button
           type="submit"
           disabled={loading || googleLoading}
-          className="
-            w-full p-3 rounded-lg font-semibold text-[#0F172A]
-            bg-gradient-to-r from-[#10B981] to-[#34D399]
-            shadow-md shadow-[#10B981]/30 text-base
-            disabled:opacity-60 transition hover:scale-[1.02]
-          "
+          className="w-full rounded-2xl p-2 border bg-black text-white disabled:opacity-60"
         >
           {loading
             ? "Working..."
             : mode === "signup"
-            ? "Sign up"
-            : "Sign in"}
+            ? "Sign up with email"
+            : "Sign in with email"}
         </button>
       </form>
 
-      {/* Divider */}
-      <div className="my-6 text-center text-white/50 text-sm">or</div>
+      <div className="my-4 text-center text-sm text-gray-500">or</div>
 
-      {/* Google Sign-In */}
       <button
         onClick={google}
         disabled={loading || googleLoading}
-        className="
-          w-full p-3 rounded-lg text-base font-medium
-          bg-[#1E293B] border border-[#334155] text-white
-          hover:bg-[#233445] transition disabled:opacity-60
-        "
+        className="w-full rounded-2xl p-2 border disabled:opacity-60"
+        aria-label="Continue with Google"
       >
         {googleLoading ? "Opening Google..." : "Continue with Google"}
       </button>
 
-      {/* Status Message */}
-      {msg && (
-        <p className="mt-5 text-center text-sm text-[#34D399]">
-          {msg}
-        </p>
-      )}
+      {msg && <p className="mt-3 text-sm">{msg}</p>}
     </div>
   );
 }
