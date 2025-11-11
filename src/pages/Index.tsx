@@ -103,11 +103,11 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen bg-pink-500/10">
       <HeroSection onUploadClick={() => setShowUpload(true)} />
       
       {showUpload && (
-        <div className="container mx-auto px-4 py-12 max-w-2xl animate-fade-in">
+        <div className="container mx-auto px-4 py-24 max-w-2xl animate-fade-in">
           <UploadZone onFileSelect={handleFileSelect} />
         </div>
       )}
