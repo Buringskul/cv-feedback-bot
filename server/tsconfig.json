@@ -1,12 +1,14 @@
 {
   "compilerOptions": {
     "target": "ES2020",
-    "module": "ESNext",
-    "moduleResolution": "Node",
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "outDir": "./dist",
+    "rootDir": "./",
     "esModuleInterop": true,
-    "strict": true,
-    "outDir": "dist",
+    "forceConsistentCasingInFileNames": true,
+    "strict": false,
     "skipLibCheck": true
   },
-  "include": ["index.ts", "auth.ts"]
+  "include": ["*.ts"]
 }
