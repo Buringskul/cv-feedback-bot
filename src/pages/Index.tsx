@@ -29,36 +29,6 @@ const Index = () => {
   // Later you can support different job roles
   const selectedRole = "General";
 
-  const highlights = [
-    {
-      title: "ATS-focused feedback",
-      desc: "Format and keyword checks to help you clear automated screens.",
-    },
-    {
-      title: "Actionable suggestions",
-      desc: "Specific rewrites for bullets, summaries, and impact statements.",
-    },
-    {
-      title: "No account required",
-      desc: "Upload, review, and download feedback without signing in.",
-    },
-  ];
-
-  const steps = [
-    {
-      title: "Upload",
-      desc: "Drag in your PDF or DOCX. We never share or train on your files.",
-    },
-    {
-      title: "Analyze",
-      desc: "Our AI reviews clarity, outcomes, ATS readiness, and formatting.",
-    },
-    {
-      title: "Refine",
-      desc: "Get a scorecard and next steps, then iterate or share with mentors.",
-    },
-  ];
-
   /* --------------------------------------------------------
      HANDLE FILE UPLOAD + SEND TO BACKEND
   --------------------------------------------------------- */
@@ -77,7 +47,7 @@ const Index = () => {
 
       const res = await fetch("http://localhost:4000/api/analyze", {
         method: "POST",
-        body: formData, // send as multipart; no JSON body or custom headers needed
+        body: formData, // ⛔ no JSON, no headers → multer receives file correctly
       });
 
       if (!res.ok) {

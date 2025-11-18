@@ -129,17 +129,6 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
             Selected: {selectedFile.name}
           </p>
         )}
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full mt-6 text-xs text-muted-foreground">
-          <div className="rounded-xl border p-3 bg-white/60 backdrop-blur">
-            <p className="font-semibold text-gray-800 mb-1">Best results</p>
-            <p>Keep bullets outcome-focused and include metrics; avoid photos and tables.</p>
-          </div>
-          <div className="rounded-xl border p-3 bg-white/60 backdrop-blur">
-            <p className="font-semibold text-gray-800 mb-1">What you get</p>
-            <p>Section-by-section grading, ATS readiness check, and rewrite prompts.</p>
-          </div>
-        </div>
       </label>
     </Card>
   );
