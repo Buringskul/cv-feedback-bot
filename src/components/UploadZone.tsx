@@ -3,12 +3,19 @@ import { Upload, FileText, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 
+const VALID_TYPES = [
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+
 interface UploadZoneProps {
   onFileSelect: (file: File) => void;
 }
 
 export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { toast } = useToast();
 
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -29,10 +36,7 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
   }, []);
 
   const validateFile = (file: File): boolean => {
-    const validTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
-    const maxSize = 10 * 1024 * 1024; // 10MB
-
-    if (!validTypes.includes(file.type)) {
+    if (!VALID_TYPES.includes(file.type)) {
       toast({
         title: "Invalid file type",
         description: "Please upload a PDF or DOCX file",
@@ -41,7 +45,7 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
       return false;
     }
 
-    if (file.size > maxSize) {
+    if (file.size > MAX_SIZE) {
       toast({
         title: "File too large",
         description: "Maximum file size is 10MB",
@@ -53,20 +57,25 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
     return true;
   };
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
+  const handleDrop = useCallback(
+    (e: React.DragEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      setIsDragging(false);
 
-    const file = e.dataTransfer.files?.[0];
-    if (file && validateFile(file)) {
-      onFileSelect(file);
-    }
-  }, [onFileSelect, toast]);
+      const file = e.dataTransfer.files?.[0];
+      if (file && validateFile(file)) {
+        setSelectedFile(file);
+        onFileSelect(file);
+      }
+    },
+    [onFileSelect] // no toast here
+  );
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && validateFile(file)) {
+      setSelectedFile(file);
       onFileSelect(file);
     }
   };
@@ -74,9 +83,9 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
   return (
     <Card
       className={`relative overflow-hidden transition-all duration-300 ${
-        isDragging 
-          ? 'border-primary bg-primary/5 shadow-glow scale-105' 
-          : 'border-border hover:border-primary/50 hover:shadow-card'
+        isDragging
+          ? "border-primary bg-primary/5 shadow-glow scale-105"
+          : "border-border hover:border-primary/50 hover:shadow-card"
       }`}
       onDragEnter={handleDragIn}
       onDragLeave={handleDragOut}
@@ -90,7 +99,7 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
           accept=".pdf,.docx"
           onChange={handleFileInput}
         />
-        
+
         <div className="relative mb-6">
           <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-20 rounded-full blur-xl" />
           <div className="relative bg-secondary p-6 rounded-full">
@@ -103,9 +112,9 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
         </div>
 
         <h3 className="text-2xl font-semibold mb-2">
-          {isDragging ? 'Drop your CV here' : 'Upload Your CV'}
+          {isDragging ? "Drop your CV here" : "Upload Your CV"}
         </h3>
-        
+
         <p className="text-muted-foreground mb-4 text-center">
           Drag and drop or click to browse
         </p>
@@ -114,6 +123,12 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
           <AlertCircle className="h-4 w-4" />
           <span>Supports PDF and DOCX up to 10MB</span>
         </div>
+
+        {selectedFile && (
+          <p className="mt-4 text-sm text-primary font-medium">
+            Selected: {selectedFile.name}
+          </p>
+        )}
       </label>
     </Card>
   );
