@@ -6,7 +6,8 @@ const Register: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
 
-  const validateEmail = (email: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+  const validateEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -17,6 +18,7 @@ const Register: React.FC = () => {
       setError("Please enter a valid email address.");
       return;
     }
+
     if (password.length < 8) {
       setError("Password must be at least 8 characters long.");
       return;
@@ -30,14 +32,24 @@ const Register: React.FC = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
       <form
+        role="form"
         onSubmit={handleSubmit}
         className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg"
       >
-        <h2 className="text-2xl font-semibold mb-6 text-center">Create Account</h2>
+        <h2 className="text-2xl font-semibold mb-6 text-center">
+          Create Account
+        </h2>
 
-        {error && <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">{error}</div>}
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+            {error}
+          </div>
+        )}
+
         {success && (
-          <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">{success}</div>
+          <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">
+            {success}
+          </div>
         )}
 
         <div className="mb-4">
