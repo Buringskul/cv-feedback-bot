@@ -7,6 +7,8 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import SignInPage from "./pages/signIn";
 import SignUpPage from "./pages/signUp";
+import HomePage from "./pages/homePage";
+import ProfilePage from "./pages/profile";  
 
 const queryClient = new QueryClient();
 
@@ -17,11 +19,13 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Index />} />
+          <Route path="/Index" element={<Index />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
           <Route path="/signin" element={<SignInPage />} />
+          <Route path="/" element={<HomePage />} />
         <Route path="/signup" element={<SignUpPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
