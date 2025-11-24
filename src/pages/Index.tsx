@@ -5,6 +5,8 @@ import { ResultsDashboard } from "@/components/ResultsDashboard";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
+import { Link } from "react-router-dom";
+
 
 interface CVAnalysis {
   overall_score: number;
@@ -105,14 +107,33 @@ const Index = () => {
   return (
     <div className="min-h-screen">
       <HeroSection onUploadClick={() => setShowUpload(true)} />
-      
+  
       {showUpload && (
         <div className="container mx-auto px-4 py-12 max-w-2xl animate-fade-in">
           <UploadZone onFileSelect={handleFileSelect} />
         </div>
       )}
+  
+      {/* Navigation links */}
+      <div className="flex gap-4 mt-6 justify-center">
+        <Link
+          to="/register"
+          className="text-blue-600 hover:underline font-medium"
+        >
+          Create Account
+        </Link>
+  
+        <Link
+          to="/login"
+          className="text-blue-600 hover:underline font-medium"
+        >
+          Login
+        </Link>
+      </div>
     </div>
   );
+  
 };
+
 
 export default Index;

@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Register: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -86,6 +87,20 @@ const Register: React.FC = () => {
         >
           Register
         </button>
+
+        {/* Navigation links */}
+        <div className="text-center mt-4">
+          <span className="text-sm text-gray-600">Already have an account? </span>
+          <Link to="/login" className="text-blue-600 hover:underline text-sm">
+            Login here
+          </Link>
+        </div>
+
+        <div className="text-center mt-2">
+          <Link to="/" className="text-gray-600 hover:underline text-sm">
+            ← Back to Home
+          </Link>
+        </div>
       </form>
     </div>
   );

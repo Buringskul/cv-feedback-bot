@@ -1,89 +1,105 @@
-import { useState } from "react";
+import React, { useState } from "react";
+import { Link } from "react-router-dom";
 
-export default function Login() {
+const Login: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
-  const [error, setError] = useState("");
-  const [success, setSuccess] = useState("");
-
-  const validateForm = () => {
-    setError("");
-    setSuccess("");
-
-    // Basic email check
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
-    if (!emailRegex.test(email)) {
-      setError("Please enter a valid email address.");
-      return false;
-    }
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
-      return false;
-    }
-
-    setSuccess("Login details are valid!");
-    return true;
-  };
+  const validateEmail = (email: string) =>
+    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    validateForm();
+    setError(null);
+    setSuccess(null);
+
+    if (!validateEmail(email)) {
+      setError("Please enter a valid email address.");
+      return;
+    }
+
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters long.");
+      return;
+    }
+
+    setSuccess("Login details are valid!");
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100 px-4">
-      <div className="w-full max-w-sm bg-white p-6 rounded-lg shadow">
-        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
+      <form
+        role="form"
+        onSubmit={handleSubmit}
+        className="w-full max-w-md bg-white p-8 rounded-2xl shadow-lg"
+      >
+        <h2 className="text-2xl font-semibold mb-6 text-center">Login</h2>
 
-        <form role="form" onSubmit={handleSubmit} className="space-y-4">
-          
-          {/* Error Alert */}
-          {error && (
-            <div className="p-2 text-sm text-red-700 bg-red-100 rounded">
-              {error}
-            </div>
-          )}
-
-          {/* Success Alert */}
-          {success && (
-            <div className="p-2 text-sm text-green-700 bg-green-100 rounded">
-              {success}
-            </div>
-          )}
-
-          <div>
-            <label className="block text-sm font-medium mb-1">Email</label>
-            <input
-              type="email"
-              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="Enter email"
-            />
+        {error && (
+          <div className="mb-4 p-3 bg-red-100 text-red-700 rounded">
+            {error}
           </div>
+        )}
 
-          <div>
-            <label className="block text-sm font-medium mb-1">Password</label>
-            <input
-              type="password"
-              className="w-full p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter password"
-            />
+        {success && (
+          <div className="mb-4 p-3 bg-green-100 text-green-700 rounded">
+            {success}
           </div>
+        )}
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 transition"
-          >
-            Login
-          </button>
-        </form>
-      </div>
+        <div className="mb-4">
+          <label htmlFor="email" className="block text-gray-700 mb-1">
+            Email
+          </label>
+          <input
+            id="email"
+            type="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            placeholder="you@example.com"
+          />
+        </div>
+
+        <div className="mb-6">
+          <label htmlFor="password" className="block text-gray-700 mb-1">
+            Password
+          </label>
+          <input
+            id="password"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            placeholder="At least 8 characters"
+          />
+        </div>
+
+        <button
+          type="submit"
+          className="w-full py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition"
+        >
+          Login
+        </button>
+
+        {/* Navigation links */}
+        <div className="text-center mt-4">
+          <span className="text-sm text-gray-600">Don’t have an account? </span>
+          <Link to="/register" className="text-blue-600 hover:underline text-sm">
+            Create an account
+          </Link>
+        </div>
+
+        <div className="text-center mt-2">
+          <Link to="/" className="text-gray-600 hover:underline text-sm">
+            ← Back to Home
+          </Link>
+        </div>
+      </form>
     </div>
   );
-}
+};
+
+export default Login;
