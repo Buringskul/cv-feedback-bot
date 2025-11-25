@@ -99,3 +99,29 @@ All colors MUST be HSL.
     @apply bg-background text-foreground;
   }
 }
+
+/* --------------------------------------------------
+   🎉 Added Smooth Fade-In Animation + Utility Classes
+----------------------------------------------------- */
+
+@layer utilities {
+  @keyframes fade-in {
+    0% {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+
+  /* optional: smooth hover transitions site-wide */
+  .smooth-transition {
+    transition: var(--transition-smooth);
+  }
+}
