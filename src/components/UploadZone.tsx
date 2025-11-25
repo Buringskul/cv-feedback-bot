@@ -116,7 +116,7 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
         </h3>
 
         <p className="text-muted-foreground mb-4 text-center">
-          Drag and drop or click to browse
+          Drag and drop or click to browse. We keep files private to this session.
         </p>
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted px-4 py-2 rounded-full">
@@ -129,6 +129,17 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
             Selected: {selectedFile.name}
           </p>
         )}
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full mt-6 text-xs text-muted-foreground">
+          <div className="rounded-xl border p-3 bg-white/60 backdrop-blur">
+            <p className="font-semibold text-gray-800 mb-1">Best results</p>
+            <p>Keep bullets outcome-focused and include metrics; avoid photos and tables.</p>
+          </div>
+          <div className="rounded-xl border p-3 bg-white/60 backdrop-blur">
+            <p className="font-semibold text-gray-800 mb-1">What you get</p>
+            <p>Section-by-section grading, ATS readiness check, and rewrite prompts.</p>
+          </div>
+        </div>
       </label>
     </Card>
   );
