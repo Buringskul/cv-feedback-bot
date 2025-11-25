@@ -117,4 +117,4 @@ supabase/.env.local
 .prettiercache
 
 # Lovable specific
-.lovable/
+.lovable/".env" 
