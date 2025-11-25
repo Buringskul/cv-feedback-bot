@@ -1,7 +1,7 @@
 // src/components/AuthForm.tsx
 import { useState } from "react";
 import { api } from "../integrations/api/client";
-import { supabase } from "../integrations/supabase/client";
+import { supabase, supabaseReady } from "../integrations/supabase/client";
 
 type Mode = "signup" | "signin";
 
@@ -12,6 +12,7 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
+  const supabaseUnavailable = !supabaseReady;
   
 
   // Helpful sanity logs (remove later)
@@ -46,10 +47,18 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   }
 
   async function google() {
+    if (!supabase || supabaseUnavailable) {
+      setMsg(
+        "Google sign-in is disabled because Supabase env vars are not configured."
+      );
+      return;
+    }
+
+    const client = supabase;
     setMsg(null);
     setGoogleLoading(true);
     try {
-      const { data, error } = await supabase.auth.signInWithOAuth({
+      const { data, error } = await client.auth.signInWithOAuth({
         provider: "google",
         options: { redirectTo: window.location.origin }, // e.g., http://localhost:5173
       });
@@ -69,10 +78,24 @@ export default function AuthForm({ mode }: { mode: Mode }) {
   }
 
   return (
-    <div className="max-w-sm mx-auto p-6 rounded-2xl shadow border">
-      <h1 className="text-2xl font-semibold mb-4">
-        {mode === "signup" ? "Create your account" : "Welcome back"}
-      </h1>
+    <div className="max-w-md mx-auto p-6 rounded-2xl shadow border bg-white space-y-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold uppercase tracking-wide text-gray-500 mb-1">
+            {mode === "signup" ? "New workspace" : "Existing account"}
+          </p>
+          <h1 className="text-2xl font-semibold">
+            {mode === "signup" ? "Create your account" : "Welcome back"}
+          </h1>
+          <p className="text-sm text-gray-600 mt-1">
+            Sign in to save your CV feedback history and keep drafts in one
+            place.
+          </p>
+        </div>
+        <span className="px-2 py-1 text-xs rounded-full bg-emerald-50 text-emerald-700 border border-emerald-100">
+          Beta
+        </span>
+      </div>
 
       <form onSubmit={onSubmit} className="space-y-3">
         {mode === "signup" && (
@@ -101,6 +124,9 @@ export default function AuthForm({ mode }: { mode: Mode }) {
           required
           autoComplete={mode === "signup" ? "new-password" : "current-password"}
         />
+        <p className="text-xs text-gray-500">
+          Use 8+ characters. You can update your details after signing in.
+        </p>
         <button
           type="submit"
           disabled={loading || googleLoading}
@@ -118,14 +144,43 @@ export default function AuthForm({ mode }: { mode: Mode }) {
 
       <button
         onClick={google}
-        disabled={loading || googleLoading}
+        disabled={loading || googleLoading || supabaseUnavailable}
         className="w-full rounded-2xl p-2 border disabled:opacity-60"
         aria-label="Continue with Google"
       >
-        {googleLoading ? "Opening Google..." : "Continue with Google"}
+        {googleLoading
+          ? "Opening Google..."
+          : supabaseUnavailable
+          ? "Google sign-in unavailable"
+          : "Continue with Google"}
       </button>
 
-      {msg && <p className="mt-3 text-sm">{msg}</p>}
+      {supabaseUnavailable && (
+        <p className="mt-2 text-xs text-red-500">
+          Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to enable Google
+          sign-in.
+        </p>
+      )}
+
+      {msg && (
+        <p className="mt-3 text-sm rounded-xl border bg-gray-50 p-3">
+          {msg}
+        </p>
+      )}
+
+      <div className="p-4 rounded-xl border bg-gray-50 space-y-2 text-sm">
+        <div className="flex items-center justify-between">
+          <span className="font-medium text-gray-800">What you'll unlock</span>
+          <span className="text-xs px-2 py-1 rounded-full bg-white border text-gray-600">
+            1 min setup
+          </span>
+        </div>
+        <ul className="list-disc list-inside text-gray-600 space-y-1">
+          <li>Keep your CV feedback history in one place</li>
+          <li>Revisit drafts without re-uploading files</li>
+          <li>Use Google to skip typing credentials next time</li>
+        </ul>
+      </div>
     </div>
   );
 }

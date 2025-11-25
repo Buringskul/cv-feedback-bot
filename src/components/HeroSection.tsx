@@ -1,6 +1,7 @@
-import { Upload } from "lucide-react";
+import { Upload, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import heroImage from "@/assets/hero-bg.jpg";
+import { Link } from "react-router-dom";
 
 interface HeroSectionProps {
   onUploadClick: () => void;
@@ -54,6 +55,45 @@ export const HeroSection = ({ onUploadClick }: HeroSectionProps) => {
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 rounded-full bg-primary-glow animate-pulse" />
               <span>100% Secure</span>
+            </div>
+          </div>
+
+          <div className="grid gap-4 sm:grid-cols-2 pt-8 max-w-3xl mx-auto">
+            <div className="rounded-2xl border bg-white/70 backdrop-blur p-5 text-left shadow-sm">
+              <p className="text-xs font-semibold uppercase tracking-wide text-primary mb-2">
+                Preview
+              </p>
+              <div className="flex items-center gap-3">
+                <div className="h-12 w-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                  86
+                </div>
+                <div>
+                  <p className="font-semibold">Scorecard example</p>
+                  <p className="text-sm text-muted-foreground">
+                    Strong impact verbs; tighten formatting and align keywords to the role.
+                  </p>
+                </div>
+              </div>
+              <div className="mt-3 flex flex-wrap gap-2 text-xs">
+                <span className="px-3 py-1 rounded-full border bg-white">Summary rewrite</span>
+                <span className="px-3 py-1 rounded-full border bg-white">ATS pass checks</span>
+                <span className="px-3 py-1 rounded-full border bg-white">Bullet prompts</span>
+              </div>
+            </div>
+            <div className="rounded-2xl border bg-gradient-to-br from-primary/10 via-accent/10 to-white p-5 text-left shadow-sm">
+              <div className="flex items-center gap-2 text-primary font-semibold mb-2">
+                <Sparkles className="h-4 w-4" />
+                <span>Save your iterations</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Create an account to keep previous uploads, compare scores, and export fixes.
+              </p>
+              <Link
+                to="/signin"
+                className="inline-flex items-center gap-2 mt-4 text-sm font-medium text-primary hover:underline"
+              >
+                Resume a saved report →
+              </Link>
             </div>
           </div>
         </div>
