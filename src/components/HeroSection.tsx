@@ -1,22 +1,30 @@
-import { Upload, Sparkles } from "lucide-react";
+import { useState } from "react";
+import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { UploadZone } from "@/components/UploadZone";
 import heroImage from "@/assets/hero-bg.jpg";
 import { Link } from "react-router-dom";
 
 interface HeroSectionProps {
-  onUploadClick: () => void;
+  onFileSelect: (file: File) => void;
 }
 
-export const HeroSection = ({ onUploadClick }: HeroSectionProps) => {
+export const HeroSection = ({ onFileSelect }: HeroSectionProps) => {
+  const [showUpload, setShowUpload] = useState(false);
+
+  const handleUploadClick = () => {
+    setShowUpload(true);
+  };
+
   return (
     <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-      {/* Gradient Background */}
-      <div 
+      {/* Background */}
+      <div
         className="absolute inset-0 bg-cover bg-center opacity-20"
         style={{ backgroundImage: `url(${heroImage})` }}
       />
       <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/10 to-primary-glow/10" />
-      
+
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
@@ -26,7 +34,7 @@ export const HeroSection = ({ onUploadClick }: HeroSectionProps) => {
               Seconds
             </span>
           </h1>
-          
+
           <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
             Upload your resume and receive instant AI-powered feedback with a comprehensive score and actionable improvements
           </p>
@@ -34,13 +42,20 @@ export const HeroSection = ({ onUploadClick }: HeroSectionProps) => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
             <Button
               size="lg"
-              onClick={onUploadClick}
+              onClick={handleUploadClick}
               className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all duration-300 hover:scale-105"
             >
               <Upload className="mr-2 h-5 w-5" />
               Upload Your CV
             </Button>
           </div>
+
+          {/* Upload Zone appears below */}
+          {showUpload && (
+            <div className="pt-6 animate-fade-in">
+              <UploadZone onFileSelect={onFileSelect} />
+            </div>
+          )}
 
           {/* Trust indicators */}
           <div className="pt-8 flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
