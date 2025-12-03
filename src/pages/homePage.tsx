@@ -19,7 +19,7 @@ const HomePage = () => {
 
   const handleAnalyzeClick = () => {
     if (!user) navigate("/signin");
-    else navigate("/analyze");
+    else navigate("/index");
   };
 
   const goToLogin = () => navigate("/signin");

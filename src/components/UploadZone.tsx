@@ -66,17 +66,15 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
       const file = e.dataTransfer.files?.[0];
       if (file && validateFile(file)) {
         setSelectedFile(file);
-        onFileSelect(file);
       }
     },
-    [onFileSelect] // no toast here
+    [] // removed onFileSelect here
   );
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && validateFile(file)) {
       setSelectedFile(file);
-      onFileSelect(file);
     }
   };
 
@@ -128,9 +126,18 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
         </div>
 
         {selectedFile && (
-          <p className="mt-4 text-sm text-primary font-medium">
-            Selected: {selectedFile.name}
-          </p>
+          <>
+            <p className="mt-4 text-sm text-primary font-medium">
+              Selected: {selectedFile.name}
+            </p>
+
+            <button
+              className="mt-4 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition"
+              onClick={() => selectedFile && onFileSelect(selectedFile)}
+            >
+              Analyze CV
+            </button>
+          </>
         )}
       </label>
     </Card>

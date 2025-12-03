@@ -20,17 +20,12 @@ interface CVAnalysis {
 }
 
 const Index = () => {
-  const [showUpload, setShowUpload] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<CVAnalysis | null>(null);
   const { toast } = useToast();
 
-  // Later you can support different job roles
   const selectedRole = "General";
 
-  /* --------------------------------------------------------
-     HANDLE FILE UPLOAD + SEND TO BACKEND
-  --------------------------------------------------------- */
   const handleFileSelect = async (file: File) => {
     setIsAnalyzing(true);
 
@@ -46,7 +41,7 @@ const Index = () => {
 
       const res = await fetch("http://localhost:4000/api/analyze", {
         method: "POST",
-        body: formData, // ⛔ no JSON, no headers → multer receives file correctly
+        body: formData,
       });
 
       if (!res.ok) {
@@ -58,7 +53,6 @@ const Index = () => {
       if (!data) throw new Error("No analysis data received");
 
       setAnalysis(data);
-      setShowUpload(false);
 
       toast({
         title: "Analysis complete!",
@@ -76,24 +70,15 @@ const Index = () => {
             : "Failed to analyze CV. Please try again.",
         variant: "destructive",
       });
-
-      setShowUpload(true);
     } finally {
       setIsAnalyzing(false);
     }
   };
 
-  /* --------------------------------------------------------
-     RESET + RUN ANOTHER ANALYSIS
-  --------------------------------------------------------- */
   const handleReset = () => {
     setAnalysis(null);
-    setShowUpload(true);
   };
 
-  /* --------------------------------------------------------
-     LOADING SCREEN
-  --------------------------------------------------------- */
   if (isAnalyzing) {
     return (
       <div className="min-h-screen flex items-center justify-center animate-fade-in">
@@ -106,25 +91,13 @@ const Index = () => {
     );
   }
 
-  /* --------------------------------------------------------
-     SHOW RESULTS
-  --------------------------------------------------------- */
   if (analysis) {
     return <ResultsDashboard analysis={analysis} onReset={handleReset} />;
   }
 
-  /* --------------------------------------------------------
-     HERO + UPLOAD ZONE
-  --------------------------------------------------------- */
   return (
     <div className="min-h-screen">
-      <HeroSection onUploadClick={() => setShowUpload(true)} />
-
-      {showUpload && (
-        <div className="container mx-auto px-4 py-12 max-w-2xl animate-fade-in">
-          <UploadZone onFileSelect={handleFileSelect} />
-        </div>
-      )}
+      <HeroSection onFileSelect={handleFileSelect} />
     </div>
   );
 };
