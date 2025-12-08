@@ -3,39 +3,64 @@ import { Link } from "react-router-dom";
 
 export default function SignUpPage() {
   return (
-    <div className="relative min-h-screen flex items-center justify-center p-6 overflow-hidden">
+    <div className="relative min-h-screen flex flex-col items-center justify-center p-10 overflow-hidden">
 
-      {/* 🔥 Gradient Background */}
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br 
-                      from-primary/20 via-accent/20 to-primary-glow/20 
-                      animate-gradient-xy" />
+      {/* 🌌 Navy + Green Background */}
+      <div
+        className="absolute inset-0 -z-10 bg-gradient-to-br
+        from-[#0F172A]/85 via-[#1E293B]/75 to-[#0F172A]/85
+        animate-gradient-xy"
+      />
 
-      {/* Glow Effects */}
-      <div className="absolute top-0 right-0 w-72 h-72 bg-primary/30 rounded-full blur-[120px]" />
-      <div className="absolute bottom-0 left-0 w-72 h-72 bg-accent/30 rounded-full blur-[120px]" />
+      {/* Glowing Green Blobs */}
+      <div className="absolute top-[-7rem] right-[-7rem] w-[38rem] h-[38rem] bg-[#10B981]/25 rounded-full blur-[180px]" />
+      <div className="absolute bottom-[-7rem] left-[-7rem] w-[38rem] h-[38rem] bg-[#34D399]/25 rounded-full blur-[180px]" />
 
-      {/* Card */}
-      <div className="backdrop-blur-xl bg-white/10 border border-white/20 
-                      p-10 rounded-3xl shadow-2xl w-full max-w-md 
-                      animate-fade-in">
+      {/* CARD */}
+      <div
+        className="
+          backdrop-blur-xl bg-[#0F172A]/40  border border-[#34D399]/15
+          p-16 rounded-3xl shadow-[0_10px_60px_rgba(0,0,0,0.45)]
+          w-full max-w-4xl
+          animate-fade-in
+        "
+      >
 
-        <h1 className="text-3xl font-bold text-center mb-6
-                       bg-gradient-to-r from-primary to-accent 
-                       bg-clip-text text-transparent">
-          Create Your Account
-        </h1>
+        {/* Logo + Title */}
+        <div className="flex flex-col items-center mb-14">
+          <img
+            src="/src/assets/logo.png"
+            alt="TailorMyCV Logo"
+            className="w-28 h-28 rounded-2xl shadow-xl mb-5"
+          />
 
-        <AuthForm mode="signup" />
+          <h1
+            className="
+              text-5xl font-extrabold tracking-tight
+              bg-gradient-to-r from-[#10B981] to-[#34D399]
+              bg-clip-text text-transparent
+            "
+          >
+            TailorMyCV
+          </h1>
+        </div>
 
-        <p className="mt-4 text-center text-sm text-gray-200">
+        {/* AUTH FORM */}
+        <div className="max-w-md mx-auto">
+          <AuthForm mode="signup" />
+        </div>
+
+        {/* Already have account */}
+        <p className="mt-10 text-center text-xl text-white/75">
           Already have an account?{" "}
           <Link
             to="/signin"
-            className="underline text-accent hover:text-primary transition"
+            className="underline text-[#34D399] hover:text-[#10B981] transition font-semibold"
           >
             Sign in
           </Link>
         </p>
+
       </div>
     </div>
   );
