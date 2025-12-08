@@ -6,6 +6,8 @@ import "dotenv/config";
 import { analyzeCv } from "./analysis.js";
 import multer from "multer";
 import pdf from "pdf-parse-fixed";
+import { extractTextFromPDF } from "./pdf.js";
+
 
 
 const upload = multer();
@@ -96,38 +98,41 @@ app.get("/me", requireAuth, (req, res) => {
 /* --------------------------------------------------------
    ANALYZE CV WITH GEMINI
 --------------------------------------------------------- */
-app.post(
-  "/api/analyze",
-  upload.single("file"),
-  async (req: express.Request & { file?: any; body: any }, res) => {
-    try {
-      const role = req.body.role || "General";
-      let cvText = "";
+app.post("/api/analyze", upload.single("file"), async (req: any, res) => {
+  try {
+    const role = req.body.role || "General";
+    let cvText = "";
 
-      // 1. PDF file upload
-      if (req.file) {
-        const buffer = req.file.buffer;
-        const parsed = await pdf(buffer);   // ONLY THIS LINE! WORKS 100%
-        cvText = parsed.text;
-      }
-      // 2. Text-based resume input
-      else if (req.body.cvText) {
-        cvText = req.body.cvText;
-      }
-      // 3. No input
-      else {
-        return res.status(400).json({ error: "No CV file or text provided" });
-      }
-
-      const results = await analyzeCv(cvText, role);
-      return res.json(results);
-
-    } catch (err: any) {
-      console.error("Analyze Error:", err);
-      return res.status(500).json({ error: err.message });
-    }
+    if (req.file) {
+    const buffer = req.file.buffer;
+    cvText = await extractTextFromPDF(buffer);
   }
-);
+
+
+    if (!cvText || cvText.trim().length < 30) {
+      return res.json({
+        overall_score: 15,
+        section_scores: {
+          professional_summary: 0,
+          work_experience: 0,
+          skills: 0,
+          education: 0,
+          format: 0,
+        },
+        strengths: [],
+        improvements: ["Not a resume (empty file or unreadable)."],
+        ats_tips: [],
+      });
+    }
+
+    const results = await analyzeCv(cvText, role);
+    return res.json(results);
+
+  } catch (err: any) {
+    console.error("Analyze Error:", err);
+    return res.status(500).json({ error: err.message });
+  }
+});
 /* --------------------------------------------------------
    HEALTH CHECK
 --------------------------------------------------------- */
@@ -138,4 +143,4 @@ app.get("/health", (_req, res) => res.json({ ok: true }));
 --------------------------------------------------------- */
 app.listen(PORT, () =>
   console.log(`API listening on http://localhost:${PORT}`)
-);
+);  

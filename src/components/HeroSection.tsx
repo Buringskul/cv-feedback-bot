@@ -1,3 +1,4 @@
+// src/components/HeroSection.tsx
 import { useState } from "react";
 import { Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,31 +13,35 @@ interface HeroSectionProps {
 export const HeroSection = ({ onFileSelect }: HeroSectionProps) => {
   const [showUpload, setShowUpload] = useState(false);
 
-  const handleUploadClick = () => {
-    setShowUpload(true);
-  };
+  const handleUploadClick = () => setShowUpload(true);
 
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-      {/* Background */}
+    <section className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 pb-20 pt-16 md:px-6">
+      
+      {/* Background image */}
       <div
-        className="absolute inset-0 bg-cover bg-center opacity-20"
+        className="absolute inset-0 -z-20 bg-cover bg-center opacity-70"
         style={{ backgroundImage: `url(${heroImage})` }}
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/10 to-primary-glow/10" />
 
-      {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 text-center">
-        <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
-          <h1 className="text-5xl md:text-7xl font-bold leading-tight">
-            Get Your CV Score in
-            <span className="block mt-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
+      {/* Navy + Green gradient overlay */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-[#0F172A]/70 via-[#1E293B]/60 to-[#0F172A]/70" />
+
+      {/* Card Container */}
+      <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-10 rounded-3xl bg-white/5 p-10 md:p-14 backdrop-blur-2xl border border-white/10 shadow-[0_10px_60px_rgba(0,0,0,0.35)]">
+
+        {/* Heading Section */}
+        <div className="mx-auto max-w-3xl space-y-6 text-center">
+
+          <h1 className="text-4xl md:text-6xl font-extrabold leading-tight tracking-tight text-white">
+            Get Your CV Score in  
+            <span className="block mt-1 bg-gradient-to-r from-[#10B981] to-[#34D399] text-transparent bg-clip-text">
               Seconds
             </span>
           </h1>
 
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-            Upload your resume and receive instant AI-powered feedback with a comprehensive score and actionable improvements
+          <p className="mx-auto max-w-2xl text-lg md:text-xl text-white/80">
+            Upload your resume and receive instant AI-powered insights, a comprehensive score, and actionable improvements — all within seconds.
           </p>
 
           {/* Upload Button */}
@@ -44,7 +49,10 @@ export const HeroSection = ({ onFileSelect }: HeroSectionProps) => {
             <Button
               size="lg"
               onClick={handleUploadClick}
-              className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all duration-300 hover:scale-105"
+              className="flex items-center gap-2 rounded-xl bg-gradient-to-r
+                from-[#10B981] to-[#34D399]
+                px-10 py-6 text-lg font-semibold text-[#0F172A]
+                shadow-lg shadow-[#10B981]/30 transition hover:scale-[1.04]"
             >
               <Upload className="h-5 w-5" />
               Upload Your CV
@@ -52,27 +60,10 @@ export const HeroSection = ({ onFileSelect }: HeroSectionProps) => {
           </div>
         </div>
 
-          {/* Upload Zone appears below */}
-          {showUpload && (
-            <div className="pt-6 animate-fade-in">
-              <UploadZone onFileSelect={onFileSelect} />
-            </div>
-          )}
-
-          {/* Trust indicators */}
-          <div className="pt-8 flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
-              <span>AI-Powered Analysis</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-              <span>Instant Results</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary-glow animate-pulse" />
-              <span>100% Secure</span>
-            </div>
+        {/* Upload Zone */}
+        {showUpload && (
+          <div className="mx-auto w-full max-w-3xl pt-6">
+            <UploadZone onFileSelect={onFileSelect} />
           </div>
         )}
 
