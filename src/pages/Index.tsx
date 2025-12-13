@@ -25,11 +25,7 @@ const Index = () => {
   const [analysis, setAnalysis] = useState<CVAnalysis | null>(null);
   const { toast } = useToast();
 
-  const extractTextFromFile = async (file: File): Promise<string> => {
-    // PDF only now (Sprint 4) — but fallback kept
-    const text = await file.text();
-    return text;
-  };
+  const selectedRole = "General";
 
   /* --------------------------------------------------------
      HANDLE FILE UPLOAD + SEND TO BACKEND
@@ -49,7 +45,7 @@ const Index = () => {
 
       const res = await fetch("http://localhost:4000/api/analyze", {
         method: "POST",
-        body: formData, // ⛔ no JSON, no headers → multer receives file correctly
+        body: formData,
       });
 
       if (error) throw error;
@@ -86,35 +82,63 @@ const Index = () => {
     setShowUpload(true); // Automatically reopen upload zone on reset
   };
 
-  // RESULTS VIEW
-  if (analysis) {
-    return <ResultsDashboard analysis={analysis} onReset={handleReset} />;
-  }
-
-  // LOADING VIEW
+  /* --------------------------------------------------------
+     LOADING SCREEN (ACCESSIBLE)
+  --------------------------------------------------------- */
   if (isAnalyzing) {
     return (
-      <div className="min-h-screen flex items-center justify-center animate-fade-in">
+      <main
+        className="min-h-screen flex items-center justify-center animate-fade-in"
+        role="status"
+        aria-live="polite"
+      >
         <div className="text-center space-y-4">
-          <Loader2 className="h-16 w-16 animate-spin text-primary mx-auto" />
-          <h2 className="text-2xl font-semibold">Analyzing your CV...</h2>
-          <p className="text-muted-foreground">Our AI is reviewing your resume</p>
+          <Loader2
+            className="h-16 w-16 animate-spin text-primary mx-auto"
+            aria-hidden="true"
+          />
+          <h2 className="text-2xl font-semibold">
+            Analyzing your CV…
+          </h2>
+          <p className="text-muted-foreground">
+            Our AI is reviewing your resume
+          </p>
         </div>
-      </div>
+      </main>
     );
   }
 
-  // HOME + UPLOAD VIEW
+  /* --------------------------------------------------------
+     SHOW RESULTS (SEMANTIC)
+  --------------------------------------------------------- */
+  if (analysis) {
+    return (
+      <main className="min-h-screen">
+        <ResultsDashboard analysis={analysis} onReset={handleReset} />
+      </main>
+    );
+  }
+
+  /* --------------------------------------------------------
+     HERO + UPLOAD ZONE (SEMANTIC)
+  --------------------------------------------------------- */
   return (
-    <div className="min-h-screen">
+    <main className="min-h-screen" role="main">
       <HeroSection onUploadClick={() => setShowUpload(true)} />
 
       {showUpload && (
-        <div className="container mx-auto px-4 py-12 max-w-2xl animate-fade-in">
+        <section
+          aria-labelledby="upload-section-title"
+          className="container mx-auto px-4 py-12 max-w-2xl animate-fade-in"
+        >
+          <h2 id="upload-section-title" className="sr-only">
+            Upload your resume
+          </h2>
+
           <UploadZone onFileSelect={handleFileSelect} />
-        </div>
+        </section>
       )}
-    </div>
+    </main>
   );
 };
 

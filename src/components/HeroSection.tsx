@@ -8,51 +8,77 @@ interface HeroSectionProps {
 
 export const HeroSection = ({ onUploadClick }: HeroSectionProps) => {
   return (
-    <section className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
-      {/* Gradient Background */}
-      <div 
+    <section
+      className="relative min-h-[90vh] flex items-center justify-center overflow-hidden"
+      aria-labelledby="hero-heading"
+    >
+      {/* Background image (decorative) */}
+      <div
         className="absolute inset-0 bg-cover bg-center opacity-20"
         style={{ backgroundImage: `url(${heroImage})` }}
+        aria-hidden="true"
       />
-      <div className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/10 to-primary-glow/10" />
-      
+      <div
+        className="absolute inset-0 bg-gradient-to-br from-primary/10 via-accent/10 to-primary-glow/10"
+        aria-hidden="true"
+      />
+
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 text-center">
         <div className="max-w-4xl mx-auto space-y-8 animate-fade-in">
-          <h1 className="text-5xl md:text-7xl font-bold leading-tight">
+          <h1
+            id="hero-heading"
+            className="text-5xl md:text-7xl font-bold leading-tight"
+          >
             Get Your CV Score in
             <span className="block mt-2 bg-gradient-to-r from-primary to-accent bg-clip-text text-transparent">
               Seconds
             </span>
           </h1>
-          
+
           <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
-            Upload your resume and receive instant AI-powered feedback with a comprehensive score and actionable improvements
+            Upload your resume and receive instant AI-powered feedback with a
+            comprehensive score and actionable improvements
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-4">
             <Button
               size="lg"
               onClick={onUploadClick}
+              aria-label="Upload your CV for analysis"
               className="text-lg px-8 py-6 bg-gradient-to-r from-primary to-accent hover:shadow-glow transition-all duration-300 hover:scale-105"
             >
-              <Upload className="mr-2 h-5 w-5" />
+              <Upload className="mr-2 h-5 w-5" aria-hidden="true" />
               Upload Your CV
             </Button>
           </div>
 
           {/* Trust indicators */}
-          <div className="pt-8 flex flex-wrap justify-center gap-8 text-sm text-muted-foreground">
+          <div
+            className="pt-8 flex flex-wrap justify-center gap-8 text-sm text-muted-foreground"
+            aria-label="Trust indicators"
+          >
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+              <div
+                className="w-2 h-2 rounded-full bg-primary animate-pulse"
+                aria-hidden="true"
+              />
               <span>AI-Powered Analysis</span>
             </div>
+
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-accent animate-pulse" />
+              <div
+                className="w-2 h-2 rounded-full bg-accent animate-pulse"
+                aria-hidden="true"
+              />
               <span>Instant Results</span>
             </div>
+
             <div className="flex items-center gap-2">
-              <div className="w-2 h-2 rounded-full bg-primary-glow animate-pulse" />
+              <div
+                className="w-2 h-2 rounded-full bg-primary-glow animate-pulse"
+                aria-hidden="true"
+              />
               <span>100% Secure</span>
             </div>
           </div>
