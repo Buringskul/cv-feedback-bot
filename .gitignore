@@ -9,6 +9,9 @@ lerna-debug.log*
 bun-debug.log*
 *.log*
 
+.env.local
+.env
+
 # Runtime data
 pids
 *.pid

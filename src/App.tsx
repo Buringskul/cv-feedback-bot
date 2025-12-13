@@ -6,6 +6,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import SignInPage from "./pages/signIn";
+import SignUpPage from "./pages/signUp";
 
 // NEW IMPORTS FOR SPRINT 4
 import ResultsPage from "./pages/ResultsPage";
@@ -29,6 +31,8 @@ const App = () => (
 
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
+          <Route path="/signin" element={<SignInPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>

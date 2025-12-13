@@ -3,7 +3,6 @@ import { HeroSection } from "@/components/HeroSection";
 import { UploadZone } from "@/components/UploadZone";
 import { ResultsDashboard } from "@/components/ResultsDashboard";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
 import { Loader2 } from "lucide-react";
 
 interface CVAnalysis {
@@ -21,7 +20,7 @@ interface CVAnalysis {
 }
 
 const Index = () => {
-  const [showUpload, setShowUpload] = useState(false);
+  const [showUpload, setShowUpload] = useState(true);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<CVAnalysis | null>(null);
   const { toast } = useToast();
@@ -32,9 +31,11 @@ const Index = () => {
     return text;
   };
 
+  /* --------------------------------------------------------
+     HANDLE FILE UPLOAD + SEND TO BACKEND
+  --------------------------------------------------------- */
   const handleFileSelect = async (file: File) => {
     setIsAnalyzing(true);
-    setShowUpload(false);
 
     try {
       toast({
@@ -42,10 +43,13 @@ const Index = () => {
         description: "This may take a few moments",
       });
 
-      const cvText = await extractTextFromFile(file);
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("role", selectedRole);
 
-      const { data, error } = await supabase.functions.invoke('analyze-cv', {
-        body: { cvText }
+      const res = await fetch("http://localhost:4000/api/analyze", {
+        method: "POST",
+        body: formData, // ⛔ no JSON, no headers → multer receives file correctly
       });
 
       if (error) throw error;
@@ -57,20 +61,26 @@ const Index = () => {
         title: "Analysis complete!",
         description: "Your CV has been analyzed successfully",
       });
+
     } catch (error) {
-      console.error('Analysis error:', error);
+      console.error("Analysis error:", error);
+
       toast({
         title: "Analysis failed",
         description:
           error instanceof Error ? error.message : "Failed to analyze CV. Please try again.",
         variant: "destructive",
       });
+
       setShowUpload(true);
     } finally {
       setIsAnalyzing(false);
     }
   };
 
+  /* --------------------------------------------------------
+     RESET + RUN ANOTHER ANALYSIS
+  --------------------------------------------------------- */
   const handleReset = () => {
     setAnalysis(null);
     setShowUpload(true); // Automatically reopen upload zone on reset
@@ -84,8 +94,8 @@ const Index = () => {
   // LOADING VIEW
   if (isAnalyzing) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center space-y-4 animate-fade-in">
+      <div className="min-h-screen flex items-center justify-center animate-fade-in">
+        <div className="text-center space-y-4">
           <Loader2 className="h-16 w-16 animate-spin text-primary mx-auto" />
           <h2 className="text-2xl font-semibold">Analyzing your CV...</h2>
           <p className="text-muted-foreground">Our AI is reviewing your resume</p>

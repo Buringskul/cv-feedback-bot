@@ -3,12 +3,19 @@ import { Upload, FileText, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 
+const VALID_TYPES = [
+  "application/pdf",
+  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+];
+const MAX_SIZE = 10 * 1024 * 1024; // 10MB
+
 interface UploadZoneProps {
   onFileSelect: (file: File) => void;
 }
 
 export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
   const [isDragging, setIsDragging] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const { toast } = useToast();
 
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -42,7 +49,7 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
       return false;
     }
 
-    if (file.size > maxSize) {
+    if (file.size > MAX_SIZE) {
       toast({
         title: "File too large",
         description: "Maximum file size is 10MB.",
@@ -71,6 +78,7 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file && validateFile(file)) {
+      setSelectedFile(file);
       onFileSelect(file);
     }
   };
