@@ -1,96 +1,38 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-
-interface AuthFormProps {
-  title: string;
-  submitLabel: string;
-  onSubmit: (email: string, password: string) => Promise<void> | void;
-}
-
-export const AuthForm = ({
-  title,
-  submitLabel,
-  onSubmit,
-}: AuthFormProps) => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-
-    try {
-      await onSubmit(email, password);
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
+// src/components/AuthForm.tsx
+export function AuthForm({ mode }: { mode: "signin" | "signup" }) {
   return (
-    <main
-      className="min-h-screen flex items-center justify-center px-4"
-      role="main"
-    >
-      <Card className="w-full max-w-md p-6">
-        <form
-          onSubmit={handleSubmit}
-          className="space-y-6"
-          aria-labelledby="auth-form-title"
-        >
-          <h1
-            id="auth-form-title"
-            className="text-2xl font-semibold text-center"
-          >
-            {title}
-          </h1>
+    <form className="space-y-4">
+      {/* Email */}
+      <div className="grid grid-cols-3 items-center gap-3">
+        <label className="text-sm font-medium col-span-1">
+          Email address
+        </label>
+        <input
+          type="email"
+          className="col-span-2 rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          required
+        />
+      </div>
 
-          {/* Email */}
-          <div className="flex flex-col gap-1">
-            <label htmlFor="email" className="text-sm font-medium">
-              Email address
-            </label>
-            <input
-              id="email"
-              name="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-              autoComplete="email"
-            />
-          </div>
+      {/* Password */}
+      <div className="grid grid-cols-3 items-center gap-3">
+        <label className="text-sm font-medium col-span-1">
+          Password
+        </label>
+        <input
+          type="password"
+          className="col-span-2 rounded-md border px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
+          required
+        />
+      </div>
 
-          {/* Password */}
-          <div className="flex flex-col gap-1">
-            <label htmlFor="password" className="text-sm font-medium">
-              Password
-            </label>
-            <input
-              id="password"
-              name="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="border rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary"
-              autoComplete="current-password"
-            />
-          </div>
-
-          {/* Submit */}
-          <Button
-            type="submit"
-            className="w-full"
-            disabled={isSubmitting}
-            aria-busy={isSubmitting}
-          >
-            {isSubmitting ? "Please wait…" : submitLabel}
-          </Button>
-        </form>
-      </Card>
-    </main>
+      {/* Submit */}
+      <button
+        type="submit"
+        className="w-full mt-4 rounded-md bg-primary text-primary-foreground py-2 font-medium hover:opacity-90 transition"
+      >
+        {mode === "signin" ? "Sign In" : "Register"}
+      </button>
+    </form>
   );
-};
+}

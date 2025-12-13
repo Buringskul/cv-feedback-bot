@@ -1,19 +1,29 @@
-// src/pages/signup.tsx
-import AuthForm from "../components/AuthForm";
+// src/pages/signUp.tsx
 import { Link } from "react-router-dom";
+import { AuthForm } from "../components/AuthForm";
 
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen grid place-items-center p-6">
-      <div className="w-full max-w-md">
+    <main className="min-h-screen flex items-center justify-center bg-gradient-to-br from-purple-600 via-indigo-600 to-purple-800 px-4">
+      <div className="bg-white rounded-xl shadow-xl px-6 py-5 w-full max-w-md">
+        {/* Title */}
+        <h1 className="text-lg font-semibold text-center mb-4">
+          Register
+        </h1>
+
+        {/* Form */}
         <AuthForm mode="signup" />
-        <p className="mt-4 text-center text-sm">
-          Already have an account?{" "}
-          <Link to="/signin" className="underline">
-            Sign in
+
+        {/* Bottom navigation */}
+        <div className="flex justify-between text-sm text-gray-500 mt-4">
+          <Link to="/" className="hover:text-gray-900">
+            Home
           </Link>
-        </p>
+          <Link to="/signin" className="hover:text-gray-900">
+            Sign In
+          </Link>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
