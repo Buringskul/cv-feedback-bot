@@ -27,16 +27,9 @@ const Index = () => {
   const { toast } = useToast();
 
   const extractTextFromFile = async (file: File): Promise<string> => {
-    if (file.type === 'application/pdf') {
-      // For PDF, we'll use a simple text extraction
-      // In production, you'd want a more robust PDF parser
-      const text = await file.text();
-      return text;
-    } else {
-      // For DOCX, read as text (simplified)
-      const text = await file.text();
-      return text;
-    }
+    // PDF only now (Sprint 4) — but fallback kept
+    const text = await file.text();
+    return text;
   };
 
   const handleFileSelect = async (file: File) => {
@@ -55,15 +48,11 @@ const Index = () => {
         body: { cvText }
       });
 
-      if (error) {
-        throw error;
-      }
-
-      if (!data) {
-        throw new Error('No analysis data received');
-      }
+      if (error) throw error;
+      if (!data) throw new Error('No analysis data received');
 
       setAnalysis(data);
+
       toast({
         title: "Analysis complete!",
         description: "Your CV has been analyzed successfully",
@@ -72,7 +61,8 @@ const Index = () => {
       console.error('Analysis error:', error);
       toast({
         title: "Analysis failed",
-        description: error instanceof Error ? error.message : "Failed to analyze CV. Please try again.",
+        description:
+          error instanceof Error ? error.message : "Failed to analyze CV. Please try again.",
         variant: "destructive",
       });
       setShowUpload(true);
@@ -83,13 +73,15 @@ const Index = () => {
 
   const handleReset = () => {
     setAnalysis(null);
-    setShowUpload(true);
+    setShowUpload(true); // Automatically reopen upload zone on reset
   };
 
+  // RESULTS VIEW
   if (analysis) {
     return <ResultsDashboard analysis={analysis} onReset={handleReset} />;
   }
 
+  // LOADING VIEW
   if (isAnalyzing) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -102,10 +94,11 @@ const Index = () => {
     );
   }
 
+  // HOME + UPLOAD VIEW
   return (
     <div className="min-h-screen">
       <HeroSection onUploadClick={() => setShowUpload(true)} />
-      
+
       {showUpload && (
         <div className="container mx-auto px-4 py-12 max-w-2xl animate-fade-in">
           <UploadZone onFileSelect={handleFileSelect} />
