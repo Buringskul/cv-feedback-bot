@@ -5,13 +5,11 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
+import UploadPage from "./pages/UploadPage";
+import ResultsPage from "./pages/ResultsPage";
 import SignInPage from "./pages/signIn";
 import SignUpPage from "./pages/signUp";
-
-// NEW IMPORTS FOR SPRINT 4
-import ResultsPage from "./pages/ResultsPage";
-import UploadPage from "./pages/UploadPage"; // or your actual upload component page
+import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -25,14 +23,16 @@ const App = () => (
           {/* Home */}
           <Route path="/" element={<Index />} />
 
-          {/* Sprint 4 Pages */}
+          {/* Resume Flow */}
           <Route path="/upload" element={<UploadPage />} />
           <Route path="/results" element={<ResultsPage />} />
 
+          {/* Auth */}
+          <Route path="/signin" element={<SignInPage />} />
+          <Route path="/signup" element={<SignUpPage />} />
+
           {/* Catch-all */}
           <Route path="*" element={<NotFound />} />
-          <Route path="/signin" element={<SignInPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
         </Routes>
       </BrowserRouter>
     </TooltipProvider>
