@@ -35,11 +35,15 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
     setIsDragging(false);
   }, []);
 
+  // PDF-only validation
   const validateFile = (file: File): boolean => {
-    if (!VALID_TYPES.includes(file.type)) {
+    const validTypes = ["application/pdf"];
+    const maxSize = 10 * 1024 * 1024; // 10MB
+
+    if (!validTypes.includes(file.type)) {
       toast({
         title: "Invalid file type",
-        description: "Please upload a PDF or DOCX file",
+        description: "Please upload a PDF file only.",
         variant: "destructive",
       });
       return false;
@@ -48,7 +52,7 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
     if (file.size > MAX_SIZE) {
       toast({
         title: "File too large",
-        description: "Maximum file size is 10MB",
+        description: "Maximum file size is 10MB.",
         variant: "destructive",
       });
       return false;
@@ -65,11 +69,10 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
 
       const file = e.dataTransfer.files?.[0];
       if (file && validateFile(file)) {
-        setSelectedFile(file);
         onFileSelect(file);
       }
     },
-    [onFileSelect] // no toast here
+    [onFileSelect]
   );
 
   const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -91,16 +94,23 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
       onDragLeave={handleDragOut}
       onDragOver={handleDrag}
       onDrop={handleDrop}
+      role="region"
+      aria-labelledby="upload-zone-title"
     >
-      <label className="flex flex-col items-center justify-center p-12 cursor-pointer">
+      <label
+        htmlFor="resume-upload"
+        className="flex flex-col items-center justify-center p-12 cursor-pointer"
+      >
         <input
+          id="resume-upload"
           type="file"
           className="hidden"
           accept=".pdf,.docx"
           onChange={handleFileInput}
+          aria-describedby="upload-zone-help"
         />
 
-        <div className="relative mb-6">
+        <div className="relative mb-6" aria-hidden="true">
           <div className="absolute inset-0 bg-gradient-to-r from-primary to-accent opacity-20 rounded-full blur-xl" />
           <div className="relative bg-secondary p-6 rounded-full">
             {isDragging ? (
@@ -111,21 +121,30 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
           </div>
         </div>
 
-        <h3 className="text-2xl font-semibold mb-2">
+        <h3
+          id="upload-zone-title"
+          className="text-2xl font-semibold mb-2"
+        >
           {isDragging ? "Drop your CV here" : "Upload Your CV"}
         </h3>
 
-        <p className="text-muted-foreground mb-4 text-center">
+        <p
+          id="upload-zone-help"
+          className="text-muted-foreground mb-4 text-center"
+        >
           Drag and drop or click to browse
         </p>
 
         <div className="flex items-center gap-2 text-sm text-muted-foreground bg-muted px-4 py-2 rounded-full">
-          <AlertCircle className="h-4 w-4" />
+          <AlertCircle className="h-4 w-4" aria-hidden="true" />
           <span>Supports PDF and DOCX up to 10MB</span>
         </div>
 
         {selectedFile && (
-          <p className="mt-4 text-sm text-primary font-medium">
+          <p
+            className="mt-4 text-sm text-primary font-medium"
+            aria-live="polite"
+          >
             Selected: {selectedFile.name}
           </p>
         )}
