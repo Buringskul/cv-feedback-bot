@@ -1,54 +1,35 @@
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { useEffect, useState } from "react";
+import { Card } from "@/components/ui/card";
 
 export default function ResultsPage() {
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    // Simulated loading state
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-muted-foreground text-lg">
+          Loading results...
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="max-w-3xl mx-auto py-10 px-4">
-      <h1 className="text-3xl font-semibold mb-6">Your CV Analysis</h1>
-
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Overall Score</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-4xl font-bold text-primary">85 / 100</p>
-        </CardContent>
-      </Card>
-
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Strengths</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="list-disc ml-5 space-y-1">
-            <li>Clear structure and readable format</li>
-            <li>Strong experience descriptions</li>
-            <li>Good action verbs</li>
-          </ul>
-        </CardContent>
-      </Card>
-
-      <Card className="mb-6">
-        <CardHeader>
-          <CardTitle>Areas for Improvement</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <ul className="list-disc ml-5 space-y-1">
-            <li>Quantify achievements</li>
-            <li>Improve summary specificity</li>
-            <li>Reorder skills section</li>
-          </ul>
-        </CardContent>
-      </Card>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Recommendations</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground">
-            Adding measurable results and refining your summary can increase your score by 5–10 points.
-          </p>
-        </CardContent>
+    <div className="min-h-screen flex items-center justify-center px-4">
+      <Card className="max-w-xl w-full p-6 text-center">
+        <h2 className="text-2xl font-semibold mb-2">Analysis Complete</h2>
+        <p className="text-muted-foreground">
+          Your resume analysis results will appear here.
+        </p>
       </Card>
     </div>
   );
