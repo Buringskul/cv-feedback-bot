@@ -1,13 +1,16 @@
-import { GoogleGenAI } from "@google/genai";
+import OpenAI from "openai";
 import "dotenv/config";
 
 export async function analyzeCv(cvText: string, role: string) {
-  const apiKey = process.env.GEMINI_API_KEY!;
   try {
-    const ai = new GoogleGenAI({ apiKey });
+    const client = new OpenAI({
+      apiKey: process.env.OPENAI_API_KEY!,
+    });
 
     const prompt = `
-RETURN JSON ONLY. NO MARKDOWN. sections score [0-20]. overall score[0-100] STRICTLY THIS SHAPE:
+RETURN JSON ONLY. NO MARKDOWN.
+
+Use this exact shape:
 
 {
   "overall_score": number,
@@ -23,27 +26,53 @@ RETURN JSON ONLY. NO MARKDOWN. sections score [0-20]. overall score[0-100] STRIC
   "ats_tips": string[]
 }
 
-Analyze this resume for the role "${role}". Scores MUST be numbers.
-Resume:
+RULES:
+• Use full scoring range 0–20 for each section.
+• Missing, empty, or unclear sections must receive score = 0. No exceptions.
+• If resume-like structure is absent (e.g., essay, report, homework, job description), 
+  respond with a very short note like "Not a resume." inside improvements[] and 
+  set overall_score between 10–40.
+
+SCORING RUBRIC:
+0–5   = Very Poor or Missing
+6–10  = Weak
+11–14 = Average
+15–17 = Strong
+18–20 = Excellent (only if complete & high-quality)
+
+OVERALL SCORE = (sum of the 5 section scores) * 5
+Round to nearest integer.
+
+Do NOT infer or imagine content that is not explicitly present.
+Only score what is clearly written.
+
+Analyze resume for the role: "${role}"
+Resume text:
 ${cvText}
+
+
 `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-2.0-flash",   // This exists in the new SDK
-      contents: prompt,
+    // Call OpenAI (GPT-4o-mini = free tier)
+    const completion = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0,
     });
 
-    let text = response.text;
+    let text = completion.choices[0].message.content?.trim() || "";
 
+    // Strip accidental formatting
     text = text.replace(/```json/gi, "").replace(/```/g, "").trim();
 
+    // Extract JSON
     const match = text.match(/\{[\s\S]*\}/);
-    if (!match) throw new Error("Gemini returned non-JSON");
+    if (!match) throw new Error("OpenAI returned non-JSON");
 
     return JSON.parse(match[0]);
 
   } catch (err) {
-    console.error("❌ Gemini error:", err);
+    console.error("❌ OpenAI analyzeCv error:", err);
     throw err;
   }
 }
