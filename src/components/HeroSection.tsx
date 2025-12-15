@@ -8,16 +8,16 @@ import { Link } from "react-router-dom";
 
 interface HeroSectionProps {
   onFileSelect: (file: File) => void;
+  isAuthed?: boolean;
 }
 
-export const HeroSection = ({ onFileSelect }: HeroSectionProps) => {
+export const HeroSection = ({ onFileSelect, isAuthed }: HeroSectionProps) => {
   const [showUpload, setShowUpload] = useState(false);
 
   const handleUploadClick = () => setShowUpload(true);
 
   return (
     <section className="relative flex min-h-[calc(100vh-4rem)] items-center justify-center px-4 pb-20 pt-16 md:px-6">
-      
       {/* Background image */}
       <div
         className="absolute inset-0 -z-20 bg-cover bg-center opacity-70"
@@ -29,19 +29,17 @@ export const HeroSection = ({ onFileSelect }: HeroSectionProps) => {
 
       {/* Card Container */}
       <div className="relative z-10 mx-auto flex w-full max-w-5xl flex-col gap-10 rounded-3xl bg-white/5 p-10 md:p-14 backdrop-blur-2xl border border-white/10 shadow-[0_10px_60px_rgba(0,0,0,0.35)]">
-
         {/* Heading Section */}
         <div className="mx-auto max-w-3xl space-y-6 text-center">
-
-          <h1 className="text-4xl md:text-6xl font-extrabold leading-tight tracking-tight text-white">
-            Get Your CV Score in  
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold leading-tight tracking-tight text-white">
+            Get Your CV Score in
             <span className="block mt-1 bg-gradient-to-r from-[#10B981] to-[#34D399] text-transparent bg-clip-text">
               Seconds
             </span>
           </h1>
 
-          <p className="mx-auto max-w-2xl text-lg md:text-xl text-white/80">
-            Upload your resume and receive instant AI-powered insights, a comprehensive score, and actionable improvements â€” all within seconds.
+          <p className="mx-auto max-w-2xl text-base sm:text-lg md:text-xl text-white/80">
+            Upload your resume and receive instant AI-powered insights, a comprehensive score, and actionable improvements - all within seconds.
           </p>
 
           {/* Upload Button */}
@@ -58,6 +56,21 @@ export const HeroSection = ({ onFileSelect }: HeroSectionProps) => {
               Upload Your CV
             </Button>
           </div>
+
+          {!isAuthed && (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm text-white/80">
+              <Link to="/signin" className="underline underline-offset-4 hover:text-white">
+                Sign in
+              </Link>
+              <span className="hidden sm:block">•</span>
+              <Link
+                to="/signup"
+                className="px-4 py-2 rounded-full bg-white/10 border border-white/20 hover:bg-white/20 transition"
+              >
+                Create account
+              </Link>
+            </div>
+          )}
         </div>
 
         {/* Upload Zone */}

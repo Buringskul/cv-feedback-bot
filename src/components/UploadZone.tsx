@@ -3,10 +3,7 @@ import { Upload, FileText, AlertCircle } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { Card } from "@/components/ui/card";
 
-const VALID_TYPES = [
-  "application/pdf",
-  "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-];
+const VALID_TYPES = ["application/pdf"];
 const MAX_SIZE = 10 * 1024 * 1024; // 10MB
 
 interface UploadZoneProps {
@@ -39,7 +36,7 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
     if (!VALID_TYPES.includes(file.type)) {
       toast({
         title: "Invalid file type",
-        description: "Please upload a PDF or DOCX file",
+        description: "Please upload a PDF file",
         variant: "destructive",
       });
       return false;
@@ -94,7 +91,7 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
         <input
           type="file"
           className="hidden"
-          accept=".pdf,.docx"
+          accept=".pdf"
           onChange={handleFileInput}
         />
 
@@ -122,7 +119,7 @@ export const UploadZone = ({ onFileSelect }: UploadZoneProps) => {
         {/* Info Chip */}
         <div className="flex items-center gap-2 text-sm text-white/70 bg-white/10 px-4 py-2 rounded-full border border-white/10 backdrop-blur-xl">
           <AlertCircle className="h-4 w-4 text-[#34D399]" />
-          <span>PDF or DOCX • Max 10MB</span>
+          <span>PDF only - Max 10MB</span>
         </div>
 
         {/* Selected File */}
