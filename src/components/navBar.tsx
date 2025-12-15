@@ -1,10 +1,18 @@
 import { Link, useLocation } from "react-router-dom";
-import { useState } from "react";
-import { Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Menu, X, LogOut, User } from "lucide-react";
 
-export const Navbar = () => {
+type NavUser = { email?: string; name?: string };
+
+interface NavbarProps {
+  user?: NavUser | null;
+  onSignOut?: () => void;
+}
+
+export const Navbar = ({ user, onSignOut }: NavbarProps) => {
   const location = useLocation();
   const [open, setOpen] = useState(false);
+  const [localUser, setLocalUser] = useState<NavUser | null>(null);
 
   const navItems = [
     { name: "Home", path: "/" },
@@ -13,6 +21,25 @@ export const Navbar = () => {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  useEffect(() => {
+    if (user !== undefined) {
+      setLocalUser(user ?? null);
+      return;
+    }
+    const stored = localStorage.getItem("auth_user");
+    if (stored) {
+      try {
+        setLocalUser(JSON.parse(stored));
+      } catch {
+        setLocalUser(null);
+      }
+    } else {
+      setLocalUser(null);
+    }
+  }, [user, location.pathname]);
+
+  const signedIn = Boolean(localUser?.email || localUser?.name);
 
   return (
     <nav
@@ -63,19 +90,50 @@ export const Navbar = () => {
           ))}
         </div>
 
-        {/* DESKTOP CTA */}
-        <Link
-          to="/index"
-          className="
-            hidden md:block text-base px-5 py-2.5 rounded-lg font-semibold
-            bg-gradient-to-r from-[#10B981] to-[#34D399]
-            text-[#0F172A] shadow-md
-            hover:shadow-lg hover:shadow-[#10B981]/30 hover:scale-[1.03]
-            transition-all
-          "
-        >
-          Upload CV
-        </Link>
+        {/* DESKTOP AUTH / CTA */}
+        <div className="hidden md:flex items-center gap-3">
+          {signedIn ? (
+            <>
+              <div className="flex items-center gap-2 px-3 py-2 rounded-lg border border-white/10 bg-white/5 text-white/80">
+                <User size={16} />
+                <span className="text-sm">{localUser?.name || localUser?.email}</span>
+              </div>
+              <button
+                onClick={onSignOut}
+                className="
+                  text-sm px-3 py-2 rounded-lg font-semibold
+                  bg-white/10 text-white
+                  hover:bg-white/20 transition
+                  inline-flex items-center gap-2
+                "
+              >
+                <LogOut size={16} />
+                Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/signin"
+                className="text-sm px-3 py-2 rounded-lg font-semibold border border-white/20 text-white/80 hover:text-white hover:border-white/40 transition"
+              >
+                Sign in
+              </Link>
+              <Link
+                to="/signup"
+                className="
+                  text-base px-5 py-2.5 rounded-lg font-semibold
+                  bg-gradient-to-r from-[#10B981] to-[#34D399]
+                  text-[#0F172A] shadow-md
+                  hover:shadow-lg hover:shadow-[#10B981]/30 hover:scale-[1.03]
+                  transition-all
+                "
+              >
+                Create account
+              </Link>
+            </>
+          )}
+        </div>
 
         {/* MOBILE MENU BUTTON */}
         <button
@@ -114,18 +172,55 @@ export const Navbar = () => {
           ))}
 
           {/* MOBILE CTA */}
-          <Link
-            to="/index"
-            onClick={() => setOpen(false)}
-            className="
-              text-lg px-6 py-3 rounded-lg font-semibold
-              bg-gradient-to-r from-[#10B981] to-[#34D399]
-              text-[#0F172A] shadow-md
-              hover:scale-[1.04] transition-all
-            "
-          >
-            Upload CV
-          </Link>
+          {signedIn ? (
+            <>
+              <div className="flex items-center gap-2 text-white">
+                <User size={18} />
+                <span>{localUser?.name || localUser?.email}</span>
+              </div>
+              <button
+                onClick={() => {
+                  setOpen(false);
+                  onSignOut?.();
+                }}
+                className="
+                  text-lg px-6 py-3 rounded-lg font-semibold
+                  bg-white/10 text-white border border-white/20
+                  hover:bg-white/20 transition
+                  inline-flex items-center gap-2
+                "
+              >
+                <LogOut size={18} />
+                Sign out
+              </button>
+            </>
+          ) : (
+            <div className="flex flex-col gap-3 w-full px-6">
+              <Link
+                to="/signin"
+                onClick={() => setOpen(false)}
+                className="
+                  text-lg px-6 py-3 rounded-lg font-semibold text-center
+                  bg-white/10 text-white border border-white/20
+                  hover:bg-white/20 transition
+                "
+              >
+                Sign in
+              </Link>
+              <Link
+                to="/signup"
+                onClick={() => setOpen(false)}
+                className="
+                  text-lg px-6 py-3 rounded-lg font-semibold text-center
+                  bg-gradient-to-r from-[#10B981] to-[#34D399]
+                  text-[#0F172A] shadow-md
+                  hover:scale-[1.02] transition
+                "
+              >
+                Create account
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </nav>

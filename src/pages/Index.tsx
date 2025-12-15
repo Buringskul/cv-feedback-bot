@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { HeroSection } from "@/components/HeroSection";
 import { ResultsDashboard } from "@/components/ResultsDashboard";
 import { useToast } from "@/hooks/use-toast";
@@ -22,12 +22,54 @@ interface CVAnalysis {
 const Index = () => {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysis, setAnalysis] = useState<CVAnalysis | null>(null);
+  const [user, setUser] = useState<{ email?: string; name?: string } | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [factIndex, setFactIndex] = useState(0);
   const { toast } = useToast();
 
   const selectedRole = "General";
+  const funFacts = [
+    "Tip: Keep bullet points outcome-focused with numbers.",
+    "Formatting: Use one font, consistent spacing, no photos.",
+    "ATS: Avoid tables/headers/footers; keep keywords natural.",
+    "Length: 1 page early career, 2 pages for senior roles.",
+  ];
+
+  useEffect(() => {
+    const saved = localStorage.getItem("auth_user");
+    if (saved) {
+      try {
+        setUser(JSON.parse(saved));
+      } catch {
+        setUser(null);
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!isAnalyzing) {
+      setProgress(0);
+      setFactIndex(0);
+      return;
+    }
+    setProgress(12);
+    const prog = setInterval(
+      () => setProgress((p) => Math.min(95, p + 7)),
+      450
+    );
+    const facts = setInterval(
+      () => setFactIndex((i) => (i + 1) % funFacts.length),
+      2500
+    );
+    return () => {
+      clearInterval(prog);
+      clearInterval(facts);
+    };
+  }, [isAnalyzing, funFacts.length]);
 
   const handleFileSelect = async (file: File) => {
     setIsAnalyzing(true);
+    setProgress(12);
 
     try {
       toast({
@@ -90,9 +132,9 @@ const Index = () => {
         <div className="absolute bottom-[-6rem] right-[-6rem] w-[34rem] h-[34rem] 
           bg-[#34D399]/20 rounded-full blur-[160px]" />
 
-        <div className="flex-1 flex items-center justify-center px-6 pt-20">
+        <div className="flex-1 flex flex-col gap-10 items-center justify-center px-6 pt-20">
           <div className="text-center space-y-4 bg-white/5 backdrop-blur-2xl 
-            border border-white/10 px-12 py-14 rounded-3xl shadow-[0_10px_60px_rgba(0,0,0,0.35)]">
+            border border-white/10 px-10 py-10 rounded-3xl shadow-[0_10px_60px_rgba(0,0,0,0.35)] max-w-3xl w-full">
 
             <Loader2 className="h-16 w-16 animate-spin text-[#34D399] mx-auto" />
 
@@ -101,8 +143,31 @@ const Index = () => {
             </h2>
 
             <p className="text-lg text-white/70">
-              Our AI is reviewing your resume and preparing insights.
+              This usually takes ~20–40 seconds. Feel free to switch tabs.
             </p>
+
+            <div className="w-full space-y-2">
+              <div className="h-2 w-full bg-white/10 rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-gradient-to-r from-[#10B981] to-[#34D399] transition-all duration-300"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+              <p className="text-sm text-white/70">{funFacts[factIndex]}</p>
+            </div>
+          </div>
+
+          <div className="w-full max-w-5xl grid gap-4 md:grid-cols-3 animate-pulse px-2">
+            {[1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="rounded-2xl border border-white/10 bg-white/10 backdrop-blur p-4 h-32"
+              >
+                <div className="h-4 w-24 bg-white/20 rounded mb-3" />
+                <div className="h-3 w-3/4 bg-white/15 rounded mb-2" />
+                <div className="h-3 w-2/3 bg-white/15 rounded" />
+              </div>
+            ))}
           </div>
         </div>
       </div>

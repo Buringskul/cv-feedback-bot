@@ -1,12 +1,17 @@
 import Tesseract from "tesseract.js";
+import { createRequire } from "module";
+
+const require = createRequire(import.meta.url);
 
 export async function runOCR(buffer: Buffer): Promise<string> {
   try {
-    console.log("🟣 Running OCR (WASM mode)...");
+     console.log("🟣 Running OCR (WASM mode)...");
+
+    const corePath = require.resolve("tesseract.js-core");
 
     const { data } = await Tesseract.recognize(buffer, "eng", {
-      corePath: require("tesseract.js-core"), // Load WASM core
-      logger: m => console.log(m)
+      corePath,
+      logger: (m) => console.log(m),
     });
 
     if (data.text?.trim().length > 0) {

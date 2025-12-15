@@ -55,7 +55,7 @@ const HomePage = () => {
 
           {/* TITLE */}
           <div className="text-center space-y-10">
-            <h1 className="text-5xl md:text-6xl font-extrabold leading-tight tracking-tight drop-shadow-xl">
+            <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold leading-tight tracking-tight drop-shadow-xl">
               Welcome to
               <span className="block mt-1 bg-gradient-to-r 
                 from-[#10B981] to-[#34D399]
@@ -64,7 +64,7 @@ const HomePage = () => {
               </span>
             </h1>
 
-            <p className="text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
+            <p className="text-base sm:text-lg md:text-xl text-white/80 max-w-2xl mx-auto leading-relaxed">
               Upload your resume and receive AI-powered feedback with
               actionable insights to help you stand out and land the job
               you deserve.
@@ -78,7 +78,7 @@ const HomePage = () => {
           </div>
 
           {/* ACTION BUTTONS */}
-          <div className="flex flex-col items-center gap-5 pt-2">
+          <div className="flex flex-col items-center gap-5 pt-2 w-full">
             <Button
               size="lg"
               onClick={handleAnalyzeClick}
@@ -87,20 +87,20 @@ const HomePage = () => {
                 hover:scale-[1.04] transition-all duration-300
                 shadow-[0_0_30px_rgba(16,185,129,0.25)]
                 text-[#0F172A]
-                rounded-xl"
+                rounded-xl w-full sm:w-auto"
             >
               <Upload className="h-5 w-5 mr-2" />
               Analyze My Resume
             </Button>
 
             {!user && (
-              <div className="flex gap-4 pt-2">
+              <div className="flex flex-col sm:flex-row gap-4 pt-2 w-full sm:w-auto">
 
                 {/* Sign In */}
                 <Button
                   onClick={goToLogin}
                   className="px-8 py-4 text-base bg-white/10 hover:bg-white/20 
-                    backdrop-blur-xl border border-white/20 rounded-lg text-white"
+                    backdrop-blur-xl border border-white/20 rounded-lg text-white w-full sm:w-auto"
                 >
                   <LogIn className="h-5 w-5 mr-2" />
                   Sign In
@@ -111,7 +111,7 @@ const HomePage = () => {
                   variant="outline"
                   onClick={goToSignup}
                   className="px-8 py-4 text-base border-white/40 text-[#34D399]
-                    hover:bg-white/10 backdrop-blur-xl rounded-lg"
+                    hover:bg-white/10 backdrop-blur-xl rounded-lg w-full sm:w-auto"
                 >
                   Create Account
                 </Button>
@@ -120,7 +120,7 @@ const HomePage = () => {
           </div>
 
           {/* TRUST INDICATORS */}
-          <div className="pt-10 flex flex-wrap justify-center gap-10 text-white/60 text-base">
+          <div className="pt-10 flex flex-wrap justify-center gap-6 sm:gap-10 text-white/60 text-sm sm:text-base">
             <div className="flex items-center gap-2">
               <div className="w-2.5 h-2.5 rounded-full bg-[#10B981] animate-pulse" />
               AI-Powered Analysis
