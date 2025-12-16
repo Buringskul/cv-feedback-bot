@@ -7,6 +7,7 @@ import { analyzeCv } from "./analysis.js";
 import multer from "multer";
 import pdf from "pdf-parse-fixed";
 import { extractTextFromPDF } from "./pdf.js";
+import { getCacheKey, getCachedResult, setCachedResult } from "./cache.js";
 
 
 
@@ -125,7 +126,63 @@ app.post("/api/analyze", upload.single("file"), async (req: any, res) => {
       });
     }
 
+    // Check cache first
+    const cacheKey = getCacheKey(cvText, role);
+    const cachedResult = await getCachedResult(cacheKey);
+
+    if (cachedResult) {
+      return res.json(cachedResult);
+    }
+
+    // Cache miss - call OpenAI
     const results = await analyzeCv(cvText, role);
+
+    // Heuristic fix: if professional_summary is 0 but overall is high,
+    // distribute missing points to professional_summary (up to 20)
+    const currentSectionSum =
+      results.section_scores.professional_summary +
+      results.section_scores.work_experience +
+      results.section_scores.skills +
+      results.section_scores.education +
+      results.section_scores.format;
+
+    const targetSectionSum = Math.round(results.overall_score / 5);
+
+    if (
+      results.section_scores.professional_summary === 0 &&
+      results.overall_score >= 80 &&
+      targetSectionSum > currentSectionSum
+    ) {
+      const diff = targetSectionSum - currentSectionSum;
+      const boosted = Math.min(20, diff);
+      if (boosted > 0) {
+        console.warn(
+          `⚠️ Boosting professional_summary by ${boosted} to better align with overall score.`
+        );
+        results.section_scores.professional_summary = boosted;
+      }
+    }
+
+    // Recalculate overall score from section scores to keep things consistent
+    const sectionSum =
+      results.section_scores.professional_summary +
+      results.section_scores.work_experience +
+      results.section_scores.skills +
+      results.section_scores.education +
+      results.section_scores.format;
+
+    const calculatedOverall = Math.round(sectionSum * 5);
+
+    if (Math.abs(results.overall_score - calculatedOverall) > 5) {
+      console.warn(
+        `⚠️ Overall score mismatch: ${results.overall_score} vs calculated ${calculatedOverall}. Using calculated value.`
+      );
+      results.overall_score = calculatedOverall;
+    }
+
+    // Store in cache (7 days TTL)
+    await setCachedResult(cacheKey, results, 604800);
+
     return res.json(results);
 
   } catch (err: any) {
@@ -133,6 +190,23 @@ app.post("/api/analyze", upload.single("file"), async (req: any, res) => {
     return res.status(500).json({ error: err.message });
   }
 });
+/* --------------------------------------------------------
+   ROOT ENDPOINT
+--------------------------------------------------------- */
+app.get("/", (_req, res) => {
+  res.json({ 
+    message: "CV Feedback Bot API",
+    version: "1.0.0",
+    endpoints: {
+      health: "/health",
+      register: "POST /register",
+      login: "POST /login",
+      me: "GET /me",
+      analyze: "POST /api/analyze"
+    }
+  });
+});
+
 /* --------------------------------------------------------
    HEALTH CHECK
 --------------------------------------------------------- */
