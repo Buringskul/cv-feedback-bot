@@ -40,6 +40,20 @@ SCORING RUBRIC:
 15–17 = Strong
 18–20 = Excellent (only if complete & high-quality)
 
+PROFESSIONAL SUMMARY DETECTION:
+The professional summary section may be labeled as:
+- "Professional Summary"
+- "Summary"
+- "Profile"
+- "Career Summary"
+- "Professional Profile"
+- "About"
+- "Objective"
+- "Executive Summary"
+- Or appear at the top of the resume before work experience
+
+Look for a brief paragraph (2-4 sentences) at the beginning of the resume that summarizes the candidate's experience, skills, and career goals. If such content exists, score it appropriately. Only score 0 if NO summary-like content exists at the top of the resume.
+
 OVERALL SCORE = (sum of the 5 section scores) * 5
 Round to nearest integer.
 
